@@ -108,7 +108,7 @@ static NSURL *_appleRootCertificateURL = nil;
 
 @implementation RMAppReceipt
 
-- (id)initWithASN1Data:(NSData*)asn1Data
+- (instancetype)initWithASN1Data:(NSData*)asn1Data
 {
     if (self = [super init])
     {
@@ -173,7 +173,7 @@ static NSURL *_appleRootCertificateURL = nil;
 {
     RMAppReceiptIAP *lastTransaction = nil;
     
-    for (RMAppReceiptIAP *iap in [self inAppPurchases])
+    for (RMAppReceiptIAP *iap in self.inAppPurchases)
     {
         if (![iap.productIdentifier isEqualToString:productIdentifier]) continue;
         
@@ -189,7 +189,7 @@ static NSURL *_appleRootCertificateURL = nil;
 - (BOOL)verifyReceiptHash
 {
     // TODO: Getting the uuid in Mac is different. See: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW5
-    NSUUID *uuid = [[UIDevice currentDevice] identifierForVendor];
+    NSUUID *uuid = [UIDevice currentDevice].identifierForVendor;
     unsigned char uuidBytes[16];
     [uuid getUUIDBytes:uuidBytes];
     
@@ -207,7 +207,7 @@ static NSURL *_appleRootCertificateURL = nil;
 
 + (RMAppReceipt*)bundleReceipt
 {
-    NSURL *URL = [[NSBundle mainBundle] appStoreReceiptURL];
+    NSURL *URL = [NSBundle mainBundle].appStoreReceiptURL;
     NSString *path = URL.path;
     const BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:nil];
     if (!exists) return nil;
@@ -228,7 +228,7 @@ static NSURL *_appleRootCertificateURL = nil;
 
 + (NSData*)dataFromPCKS7Path:(NSString*)path
 {
-    const char *cpath = [[path stringByStandardizingPath] fileSystemRepresentation];
+    const char *cpath = path.stringByStandardizingPath.fileSystemRepresentation;
     FILE *fp = fopen(cpath, "rb");
     if (!fp) return nil;
     
@@ -323,7 +323,7 @@ static NSURL *_appleRootCertificateURL = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         formatter = [[NSDateFormatter alloc] init];
-        [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+        formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
         formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ssZ";
     });
     NSDate *date = [formatter dateFromString:string];
@@ -334,7 +334,7 @@ static NSURL *_appleRootCertificateURL = nil;
 
 @implementation RMAppReceiptIAP
 
-- (id)initWithASN1Data:(NSData*)asn1Data
+- (instancetype)initWithASN1Data:(NSData*)asn1Data
 {
     if (self = [super init])
     {
